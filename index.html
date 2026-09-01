@@ -3,44 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Cártel del Buen Sabor - Pedidos</title>
+    <title>El Cártel del Buen Sabor - Menú Digital</title>
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome para Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f6f9;
+        }
+        .header-cartel {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            border-bottom: 4px solid #ffc107;
+        }
+        .card-producto {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .card-producto:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+        .btn-cartel {
+            background-color: #ffc107;
+            color: #000;
+            font-weight: 600;
+            border: none;
+        }
+        .btn-cartel:hover {
+            background-color: #e0a800;
+            color: #000;
+        }
+        .badge-categoria {
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+        .carrito-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
 
-    <div class="container my-4">
-        <div class="text-center mb-4">
-            <h2 class="fw-bold">🍔 EL CÁRTEL <span class="text-muted fs-5">del buen sabor</span></h2>
-            <p class="text-danger fst-italic">¡Condenados a comer rico!</p>
+    <!-- Encabezado Estilizado -->
+    <header class="header-cartel py-4 mb-4 shadow">
+        <div class="container text-center">
+            <h1 class="fw-bold mb-1"><i class="fas fa-burger text-warning me-2"></i>EL CÁRTEL</h1>
+            <p class="text-warning mb-0 fs-5 fw-light">del buen sabor</p>
+            <span class="badge bg-danger mt-2 px-3 py-1 fst-italic">¡Condenados a comer rico!</span>
+        </div>
+    </header>
+
+    <div class="container mb-5">
+        <!-- Filtros por Categoría Modernos -->
+        <div class="d-flex overflow-auto pb-3 mb-4 gap-2" id="filtro-categorias" style="white-space: nowrap;">
+            <button class="btn btn-dark btn-sm rounded-pill px-3 active shadow-sm" onclick="filtrarCategoria('Todos')"><i class="fas fa-th-large me-1"></i> Ver Todo</button>
         </div>
 
-        <!-- Botones de Filtro por Categoría -->
-        <div class="d-flex overflow-auto pb-2 mb-3 gap-2" id="filtro-categorias">
-            <button class="btn btn-dark btn-sm flex-shrink-0 active" onclick="filtrarCategoria('Todos')">Ver Todo</button>
-        </div>
-
-        <div class="row">
+        <div class="row g-4">
             <!-- Menú de Productos -->
-            <div class="col-lg-7 mb-4">
-                <div class="row" id="menu-productos"></div>
+            <div class="col-lg-7">
+                <div class="row g-3" id="menu-productos"></div>
             </div>
 
-            <!-- Resumen del pedido -->
+            <!-- Resumen del Pedido (Carrito) -->
             <div class="col-lg-5">
-                <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card carrito-card sticky-top bg-white p-3" style="top: 20px;">
                     <div class="card-body">
-                        <h4 class="card-title mb-3">Tu Pedido Actual</h4>
+                        <h4 class="card-title fw-bold mb-3"><i class="fas fa-receipt text-warning me-2"></i>Tu Pedido Actual</h4>
                         
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Número de Mesa o Nombre:</label>
-                            <input type="text" id="nombre-cliente" class="form-control" placeholder="Ej: Mesa 4 o Juan Pérez">
+                            <label class="form-label fw-semibold small text-muted"><i class="fas fa-user-tag me-1"></i> Número de Mesa o Nombre:</label>
+                            <input type="text" id="nombre-cliente" class="form-control form-control-lg bg-light border-0" placeholder="Ej: Mesa 4 o Juan Pérez">
                         </div>
 
-                        <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                        <div class="table-responsive mb-3" style="max-height: 260px; overflow-y: auto;">
                             <table class="table table-sm align-middle">
-                                <thead>
+                                <thead class="table-light">
                                     <tr>
-                                        <th>Item</th>
+                                        <th class="ps-2">Item</th>
                                         <th>Cant</th>
                                         <th>Subtotal</th>
                                         <th></th>
@@ -50,20 +99,26 @@
                             </table>
                         </div>
 
-                        <hr>
-                        <h5>Total a Pagar: <span id="total-pagar" class="text-success fw-bold">S/ 0.00</span></h5>
+                        <div class="bg-light p-3 rounded-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold fs-5">Total a Pagar:</span>
+                                <span id="total-pagar" class="text-success fw-bold fs-4">S/ 0.00</span>
+                            </div>
+                        </div>
 
-                        <div class="mb-3 mt-3">
-                            <label class="form-label fw-bold">Método de Pago:</label>
-                            <select id="metodo-pago" class="form-select">
-                                <option value="Efectivo al recibir">Efectivo</option>
-                                <option value="Yape / Plin">Yape / Plin (BCP)</option>
-                                <option value="Tarjeta POS">Tarjeta POS</option>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small text-muted"><i class="fas fa-wallet me-1"></i> Método de Pago:</label>
+                            <select id="metodo-pago" class="form-select bg-light border-0">
+                                <option value="Efectivo al recibir">💵 Efectivo al recibir</option>
+                                <option value="Yape / Plin">📱 Yape / Plin (BCP)</option>
+                                <option value="Tarjeta POS">💳 Tarjeta POS</option>
                             </select>
                         </div>
 
                         <div class="d-grid">
-                            <button class="btn btn-success btn-lg" onclick="enviarPedido()">Enviar Pedido a Caja</button>
+                            <button class="btn btn-cartel btn-lg py-3 shadow-sm fw-bold" onclick="enviarPedido()">
+                                <i class="fas fa-paper-plane me-2"></i> Enviar Pedido a Caja
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -74,38 +129,39 @@
     <!-- Modal para Agregar Cremas y Notas -->
     <div class="modal fade" id="modalNota" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="titulo-modal-producto">Personalizar Pedido</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header bg-dark text-white rounded-top-4">
+                    <h5 class="modal-title fw-bold" id="titulo-modal-producto">Personalizar Pedido</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     <input type="hidden" id="modal-producto-id">
                     
-                    <label class="form-label fw-bold text-dark mb-2">Elige tus Cremas:</label>
-                    <div class="row g-2 mb-3" id="lista-cremas-checkbox">
-                        <div class="col-6"><div class="form-check"><input class="form-check-input crema-opcion" type="checkbox" value="Mayonesa" id="crema1"><label class="form-check-label" for="crema1">Mayonesa</label></div></div>
-                        <div class="col-6"><div class="form-check"><input class="form-check-input crema-opcion" type="checkbox" value="Ketchup" id="crema2"><label class="form-check-label" for="crema2">Ketchup</label></div></div>
-                        <div class="col-6"><div class="form-check"><input class="form-check-input crema-opcion" type="checkbox" value="Mostaza" id="crema3"><label class="form-check-label" for="crema3">Mostaza</label></div></div>
-                        <div class="col-6"><div class="form-check"><input class="form-check-input crema-opcion" type="checkbox" value="Aji" id="crema4"><label class="form-check-label" for="crema4">Ají</label></div></div>
-                        <div class="col-6"><div class="form-check"><input class="form-check-input crema-opcion" type="checkbox" value="Tartara" id="crema5"><label class="form-check-label" for="crema5">Tártara</label></div></div>
-                        <div class="col-6"><div class="form-check"><input class="form-check-input crema-opcion" type="checkbox" value="Golf" id="crema6"><label class="form-check-label" for="crema6">Golf</label></div></div>
-                        <div class="col-6"><div class="form-check"><input class="form-check-input crema-opcion" type="checkbox" value="Aceituna" id="crema7"><label class="form-check-label" for="crema7">Aceituna</label></div></div>
+                    <label class="form-label fw-bold text-dark mb-3"><i class="fas fa-bottle-droplet text-warning me-1"></i> Elige tus Cremas:</label>
+                    <div class="row g-2 mb-4" id="lista-cremas-checkbox">
+                        <div class="col-6"><div class="form-check p-2 bg-light rounded"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Mayonesa" id="crema1"><label class="form-check-label ms-2 fw-medium" for="crema1">Mayonesa</label></div></div>
+                        <div class="col-6"><div class="form-check p-2 bg-light rounded"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Ketchup" id="crema2"><label class="form-check-label ms-2 fw-medium" for="crema2">Ketchup</label></div></div>
+                        <div class="col-6"><div class="form-check p-2 bg-light rounded"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Mostaza" id="crema3"><label class="form-check-label ms-2 fw-medium" for="crema3">Mostaza</label></div></div>
+                        <div class="col-6"><div class="form-check p-2 bg-light rounded"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Aji" id="crema4"><label class="form-check-label ms-2 fw-medium" for="crema4">Ají</label></div></div>
+                        <div class="col-6"><div class="form-check p-2 bg-light rounded"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Tartara" id="crema5"><label class="form-check-label ms-2 fw-medium" for="crema5">Tártara</label></div></div>
+                        <div class="col-6"><div class="form-check p-2 bg-light rounded"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Golf" id="crema6"><label class="form-check-label ms-2 fw-medium" for="crema6">Golf</label></div></div>
+                        <div class="col-12"><div class="form-check p-2 bg-light rounded"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Aceituna" id="crema7"><label class="form-check-label ms-2 fw-medium" for="crema7">Aceituna</label></div></div>
                     </div>
 
                     <div class="mb-2">
-                        <label class="form-label fw-bold text-dark">Nota adicional (Opcional):</label>
-                        <input type="text" id="nota-producto" class="form-control" placeholder="Ej: Papas bien crocantes">
+                        <label class="form-label fw-bold text-dark"><i class="fas fa-comment-alt text-warning me-1"></i> Nota adicional (Opcional):</label>
+                        <input type="text" id="nota-producto" class="form-control bg-light border-0" placeholder="Ej: Sin cebolla, papas crocantes">
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="confirmarAgregarConNota()">Agregar al Pedido</button>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-cartel px-4 rounded-pill fw-bold" onclick="confirmarAgregarConNota()">Agregar al Pedido</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const productos = [
@@ -180,7 +236,7 @@
             
             categorias.forEach(cat => {
                 if(cat !== 'Todos') {
-                    contenedorFiltros.innerHTML += `<button class="btn btn-outline-dark btn-sm flex-shrink-0" onclick="filtrarCategoria('${cat}')">${cat}</button>`;
+                    contenedorFiltros.innerHTML += `<button class="btn btn-outline-dark btn-sm rounded-pill px-3 shadow-sm" onclick="filtrarCategoria('${cat}')">${cat}</button>`;
                 }
             });
         }
@@ -189,10 +245,10 @@
             categoriaActual = cat;
             const botones = document.querySelectorAll('#filtro-categorias button');
             botones.forEach(btn => {
-                if(btn.innerText === cat) {
-                    btn.className = "btn btn-dark btn-sm flex-shrink-0 active";
+                if(btn.innerText.includes(cat) || (cat === 'Todos' && btn.innerText.includes('Ver Todo'))) {
+                    btn.className = "btn btn-dark btn-sm rounded-pill px-3 active shadow-sm";
                 } else {
-                    btn.className = "btn btn-outline-dark btn-sm flex-shrink-0";
+                    btn.className = "btn btn-outline-dark btn-sm rounded-pill px-3 shadow-sm";
                 }
             });
             cargarMenu();
@@ -207,29 +263,26 @@
                 ? productos 
                 : productos.filter(p => p.categoria === categoriaActual);
 
-            let rowDiv = document.createElement('div');
-            rowDiv.className = 'row';
-
             prodsFiltrados.forEach(prod => {
-                // Si el plato está marcado como agotado en el admin, no se muestra
                 if (agotados.includes(prod.id)) return;
 
-                rowDiv.innerHTML += `
-                    <div class="col-sm-6 mb-3">
-                        <div class="card h-100 shadow-sm border-0 bg-white">
+                contenedor.innerHTML += `
+                    <div class="col-sm-6">
+                        <div class="card card-producto h-100 bg-white p-2">
                             <div class="card-body d-flex flex-column justify-content-between p-3">
                                 <div>
-                                    <span class="badge bg-light text-secondary mb-1" style="font-size: 0.7rem;">${prod.categoria}</span>
-                                    <h6 class="card-title fw-bold mb-1">${prod.nombre}</h6>
-                                    <p class="text-muted fw-bold mb-2">S/ ${prod.precio.toFixed(2)}</p>
+                                    <span class="badge bg-light text-muted border mb-2 badge-categoria rounded-pill px-2 py-1">${prod.categoria}</span>
+                                    <h6 class="card-title fw-bold text-dark mb-1">${prod.nombre}</h6>
+                                    <p class="text-success fw-bold fs-5 mb-3">S/ ${prod.precio.toFixed(2)}</p>
                                 </div>
-                                <button class="btn btn-outline-primary btn-sm w-100" onclick="abrirModalNota(${prod.id})">+ Agregar</button>
+                                <button class="btn btn-outline-dark btn-sm w-100 rounded-pill py-2 fw-semibold" onclick="abrirModalNota(${prod.id})">
+                                    <i class="fas fa-plus-circle me-1"></i> Agregar
+                                </button>
                             </div>
                         </div>
                     </div>
                 `;
             });
-            contenedor.appendChild(rowDiv);
         }
 
         function abrirModalNota(id) {
@@ -238,7 +291,6 @@
             document.getElementById('titulo-modal-producto').innerText = `Personalizar: ${prod.nombre}`;
             document.getElementById('nota-producto').value = '';
             
-            // Limpiar los checkboxes de cremas al abrir
             document.querySelectorAll('.crema-opcion').forEach(el => el.checked = false);
 
             const modal = new bootstrap.Modal(document.getElementById('modalNota'));
@@ -250,7 +302,6 @@
             const notaPersonalizada = document.getElementById('nota-producto').value.trim();
             const producto = productos.find(p => p.id === id);
 
-            // Recopilar cremas seleccionadas
             let cremasSeleccionadas = [];
             document.querySelectorAll('.crema-opcion:checked').forEach(el => {
                 cremasSeleccionadas.push(el.value);
@@ -305,7 +356,7 @@
             let total = 0;
 
             if (carrito.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">Aún no hay productos seleccionados</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">Aún no hay productos seleccionados</td></tr>`;
                 spanTotal.innerText = `S/ 0.00`;
                 return;
             }
@@ -313,18 +364,18 @@
             carrito.forEach(item => {
                 let subtotal = item.precio * item.cantidad;
                 total += subtotal;
-                let textoDetallesHtml = item.detalles ? `<br><small class="text-danger">${item.detalles}</small>` : '';
+                let textoDetallesHtml = item.detalles ? `<br><small class="text-danger fw-semibold">👉 ${item.detalles}</small>` : '';
                 
                 tbody.innerHTML += `
                     <tr>
-                        <td style="font-size: 0.85rem;">${item.nombre} ${textoDetallesHtml}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="cambiarCantidad('${item.itemUnicoId}', -1)">-</button>
-                            <span class="mx-1">${item.cantidad}</span>
-                            <button class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="cambiarCantidad('${item.itemUnicoId}', 1)">+</button>
+                        <td class="ps-2" style="font-size: 0.85rem;">${item.nombre} ${textoDetallesHtml}</td>
+                        <td style="white-space: nowrap;">
+                            <button class="btn btn-sm btn-outline-dark py-0 px-1 rounded-circle" onclick="cambiarCantidad('${item.itemUnicoId}', -1)">-</button>
+                            <span class="mx-1 fw-bold">${item.cantidad}</span>
+                            <button class="btn btn-sm btn-outline-dark py-0 px-1 rounded-circle" onclick="cambiarCantidad('${item.itemUnicoId}', 1)">+</button>
                         </td>
-                        <td style="font-size: 0.85rem;">S/ ${subtotal.toFixed(2)}</td>
-                        <td><button class="btn btn-danger btn-sm py-0 px-1" onclick="cambiarCantidad('${item.itemUnicoId}', -${item.cantidad})">&times;</button></td>
+                        <td style="font-size: 0.85rem;" class="fw-semibold">S/ ${subtotal.toFixed(2)}</td>
+                        <td><button class="btn btn-outline-danger btn-sm py-0 px-1 border-0" onclick="cambiarCantidad('${item.itemUnicoId}', -${item.cantidad})"><i class="fas fa-trash-alt"></i></button></td>
                     </tr>
                 `;
             });
