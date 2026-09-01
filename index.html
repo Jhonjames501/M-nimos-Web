@@ -3,31 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema POS - Restaurante</title>
-    <!-- Bootstrap CSS -->
+    <title>Realiza tu Pedido - Restaurante</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
     <div class="container my-4">
-        <h2 class="text-center mb-4">🖥️ Sistema POS - Restaurante</h2>
+        <h2 class="text-center mb-2">🍽️ Haz tu Pedido</h2>
+        <p class="text-center text-muted mb-4">Selecciona tus platos y envíalos directamente a cocina</p>
 
         <div class="row">
-            <!-- Productos Disponibles -->
+            <!-- Menú para el cliente -->
             <div class="col-md-7 mb-4">
-                <h4 class="mb-3">Menú Disponible</h4>
-                <div class="row" id="menu-productos">
-                    <!-- Los productos se cargan aquí -->
-                </div>
+                <h4 class="mb-3">Nuestro Menú</h4>
+                <div class="row" id="menu-productos"></div>
             </div>
 
-            <!-- Venta Actual / Ticket -->
+            <!-- Resumen del pedido del cliente -->
             <div class="col-md-5">
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <h4 class="card-title mb-3">Venta Actual</h4>
+                        <h4 class="card-title mb-3">Tu Pedido</h4>
                         
-                        <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                        <div class="mb-3">
+                            <label class="form-label">Número de Mesa o Nombre:</label>
+                            <input type="text" id="nombre-cliente" class="form-control" placeholder="Ej: Mesa 4 o Juan Pérez">
+                        </div>
+
+                        <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
@@ -37,27 +40,24 @@
                                         <th></th>
                                     </tr>
                                 </thead>
-                                <tbody id="lista-carrito">
-                                    <!-- Aquí van los productos agregados -->
-                                </tbody>
+                                <tbody id="lista-carrito"></tbody>
                             </table>
                         </div>
 
                         <hr>
-                        <h5>Total a Pagar: <span id="total-pagar" class="text-success fw-bold">S/ 0.00</span></h5>
+                        <h5>Total: <span id="total-pagar" class="text-success fw-bold">S/ 0.00</span></h5>
 
                         <div class="mb-3 mt-3">
-                            <label for="metodo-pago" class="form-label">Método de Pago:</label>
+                            <label class="form-label">Método de Pago:</label>
                             <select id="metodo-pago" class="form-select">
-                                <option value="Efectivo">Efectivo</option>
+                                <option value="Efectivo al recibir">Efectivo al recibir</option>
                                 <option value="Yape / Plin">Yape / Plin</option>
                                 <option value="Tarjeta POS">Tarjeta POS</option>
                             </select>
                         </div>
 
-                        <div class="d-grid gap-2">
-                            <button class="btn btn-success" onclick="procesarCobro()">Cobrar e Imprimir Ticket</button>
-                            <button class="btn btn-outline-danger btn-sm" onclick="limpiarCarrito()">Cancelar Venta</button>
+                        <div class="d-grid">
+                            <button class="btn btn-success btn-lg" onclick="enviarPedido()">Enviar Pedido a Caja</button>
                         </div>
                     </div>
                 </div>
@@ -65,7 +65,6 @@
         </div>
     </div>
 
-    <!-- Script de lógica POS -->
     <script>
         const productos = [
             { id: 1, nombre: "Pollo a la Brasa", precio: 65.00 },
@@ -100,7 +99,6 @@
         function agregarAlCarrito(id) {
             const producto = productos.find(p => p.id === id);
             const itemEnCarrito = carrito.find(item => item.id === id);
-
             if (itemEnCarrito) {
                 itemEnCarrito.cantidad++;
             } else {
@@ -142,27 +140,40 @@
                     </tr>
                 `;
             });
-
             spanTotal.innerText = `S/ ${total.toFixed(2)}`;
         }
 
-        function limpiarCarrito() {
+        function enviarPedido() {
+            if (carrito.length === 0) {
+                alert("Agrega al menos un producto a tu pedido.");
+                return;
+            }
+            const cliente = document.getElementById('nombre-cliente').value.trim();
+            if (!cliente) {
+                alert("Por favor ingresa tu número de mesa o nombre.");
+                return;
+            }
+
+            const nuevoPedido = {
+                id: Date.now(),
+                cliente: cliente,
+                items: [...carrito],
+                total: document.getElementById('total-pagar').innerText,
+                metodo: document.getElementById('metodo-pago').value,
+                estado: "Pendiente"
+            };
+
+            // Guardar en la base de datos local del navegador (para que la caja lo reciba)
+            let pedidos = JSON.parse(localStorage.getItem('pedidos_restaurante')) || [];
+            pedidos.push(nuevoPedido);
+            localStorage.setItem('pedidos_restaurante', JSON.stringify(pedidos));
+
+            alert("¡Pedido enviado con éxito a la cocina!");
             carrito = [];
+            document.getElementById('nombre-cliente').value = '';
             actualizarCarrito();
         }
 
-        function procesarCobro() {
-            if (carrito.length === 0) {
-                alert("No hay productos en la venta actual.");
-                return;
-            }
-            const metodo = document.getElementById('metodo-pago').value;
-            const total = document.getElementById('total-pagar').innerText;
-            alert(`¡Cobro exitoso!\nMétodo: ${metodo}\nTotal: ${total}\n\nImprimiendo ticket de venta...`);
-            limpiarCarrito();
-        }
-
-        // Inicializar menú al cargar
         cargarMenu();
     </script>
 </body>
