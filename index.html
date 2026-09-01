@@ -3,111 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema POS Básico</title>
-    <!-- Bootstrap CSS para el diseño -->
+    <title>Sistema POS - Restaurante</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
-    <div class="container mt-4">
-        <h2 class="mb-4">💻 Mini Sistema POS - Ventas</h2>
-        
+    <div class="container my-4">
+        <h2 class="text-center mb-4">🖥️ Sistema POS - Restaurante</h2>
+
         <div class="row">
-            <!-- Sección de Productos -->
-            <div class="col-md-7">
-                <h4>Productos Disponibles</h4>
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <div class="card p-3 text-center">
-                            <h5 class="card-title">Pollo a la Brasa</h5>
-                            <p class="text-muted">S/ 65.00</p>
-                            <button class="btn btn-primary btn-sm" onclick="agregarProducto('Pollo a la Brasa', 65.00)">Agregar</button>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="card p-3 text-center">
-                            <h5 class="card-title">Gaseosa 1.5L</h5>
-                            <p class="text-muted">S/ 10.00</p>
-                            <button class="btn btn-primary btn-sm" onclick="agregarProducto('Gaseosa 1.5L', 10.00)">Agregar</button>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="card p-3 text-center">
-                            <h5 class="card-title">Porción Papas</h5>
-                            <p class="text-muted">S/ 15.00</p>
-                            <button class="btn btn-primary btn-sm" onclick="agregarProducto('Porción Papas', 15.00)">Agregar</button>
-                        </div>
-                    </div>
+            <!-- Productos Disponibles -->
+            <div class="col-md-7 mb-4">
+                <h4 class="mb-3">Menú Disponible</h4>
+                <div class="row" id="menu-productos">
+                    <!-- Los productos se cargan aquí -->
                 </div>
             </div>
 
-            <!-- Sección del Carrito / Venta -->
+            <!-- Venta Actual / Ticket -->
             <div class="col-md-5">
-                <div class="card p-3">
-                    <h4>Venta Actual</h4>
-                    <ul id="lista-carrito" class="list-group mb-3">
-                        <!-- Los productos agregados aparecerán aquí -->
-                    </ul>
-                    <h5>Total a Pagar: <span id="total">S/ 0.00</span></h5>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Método de Pago:</label>
-                        <select id="metodo-pago" class="form-select">
-                            <option value="Efectivo">Efectivo</option>
-                            <option value="Yape">Yape / Plin</option>
-                            <option value="Visa">Tarjeta Visa</option>
-                        </select>
-                    </div>
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3">Venta Actual</h4>
+                        
+                        <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Cant</th>
+                                        <th>Subtotal</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lista-carrito">
+                                    <!-- Aquí van los productos agregados -->
+                                </tbody>
+                            </table>
+                        </div>
 
-                    <button class="btn btn-success w-100" onclick="procesarVenta()">Cobrar e Imprimir</button>
+                        <hr>
+                        <h5>Total a Pagar: <span id="total-pagar" class="text-success fw-bold">S/ 0.00</span></h5>
+
+                        <div class="mb-3 mt-3">
+                            <label for="metodo-pago" class="form-label">Método de Pago:</label>
+                            <select id="metodo-pago" class="form-select">
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Yape / Plin">Yape / Plin</option>
+                                <option value="Tarjeta POS">Tarjeta POS</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-success" onclick="procesarCobro()">Cobrar e Imprimir Ticket</button>
+                            <button class="btn btn-outline-danger btn-sm" onclick="limpiarCarrito()">Cancelar Venta</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Script de lógica en JavaScript -->
+    <!-- Script de lógica POS -->
     <script>
-        let carrito = [];
-        let total = 0;
+        const productos = [
+            { id: 1, nombre: "Pollo a la Brasa", precio: 65.00 },
+            { id: 2, nombre: "Gaseosa 1.5L", precio: 10.00 },
+            { id: 3, nombre: "Porción Papas", precio: 15.00 },
+            { id: 4, nombre: "Chifa Aero", precio: 22.00 },
+            { id: 5, nombre: "Lomo Saltado", precio: 28.00 }
+        ];
 
-        function agregarProducto(nombre, precio) {
-            carrito.push({ nombre, precio });
+        let carrito = [];
+
+        function cargarMenu() {
+            const contenedor = document.getElementById('menu-productos');
+            contenedor.innerHTML = '';
+            productos.forEach(prod => {
+                contenedor.innerHTML += `
+                    <div class="col-sm-6 mb-3">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <div>
+                                    <h5 class="card-title fs-6">${prod.nombre}</h5>
+                                    <p class="card-text text-muted fw-bold">S/ ${prod.precio.toFixed(2)}</p>
+                                </div>
+                                <button class="btn btn-primary btn-sm mt-2" onclick="agregarAlCarrito(${prod.id})">Agregar</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function agregarAlCarrito(id) {
+            const producto = productos.find(p => p.id === id);
+            const itemEnCarrito = carrito.find(item => item.id === id);
+
+            if (itemEnCarrito) {
+                itemEnCarrito.cantidad++;
+            } else {
+                carrito.push({ ...producto, cantidad: 1 });
+            }
+            actualizarCarrito();
+        }
+
+        function cambiarCantidad(id, cambio) {
+            const item = carrito.find(p => p.id === id);
+            if (item) {
+                item.cantidad += cambio;
+                if (item.cantidad <= 0) {
+                    carrito = carrito.filter(p => p.id !== id);
+                }
+            }
             actualizarCarrito();
         }
 
         function actualizarCarrito() {
-            const lista = document.getElementById('lista-carrito');
-            lista.innerHTML = '';
-            total = 0;
+            const tbody = document.getElementById('lista-carrito');
+            const spanTotal = document.getElementById('total-pagar');
+            tbody.innerHTML = '';
+            let total = 0;
 
-            carrito.forEach((item, index) => {
-                total += item.precio;
-                lista.innerHTML += `
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        ${item.nombre} - S/ ${item.precio.toFixed(2)}
-                        <button class="btn btn-danger btn-sm" onclick="eliminarItem(${index})">X</button>
-                    </li>
+            carrito.forEach(item => {
+                let subtotal = item.precio * item.cantidad;
+                total += subtotal;
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.nombre}</td>
+                        <td>
+                            <button class="btn btn-xs btn-outline-secondary py-0 px-1" onclick="cambiarCantidad(${item.id}, -1)">-</button>
+                            ${item.cantidad}
+                            <button class="btn btn-xs btn-outline-secondary py-0 px-1" onclick="cambiarCantidad(${item.id}, 1)">+</button>
+                        </td>
+                        <td>S/ ${subtotal.toFixed(2)}</td>
+                        <td><button class="btn btn-danger btn-sm py-0 px-1" onclick="cambiarCantidad(${item.id}, -${item.cantidad})">&times;</button></td>
+                    </tr>
                 `;
             });
 
-            document.getElementById('total').innerText = `S/ ${total.toFixed(2)}`;
+            spanTotal.innerText = `S/ ${total.toFixed(2)}`;
         }
 
-        function eliminarItem(index) {
-            carrito.splice(index, 1);
-            actualizarCarrito();
-        }
-
-        function procesarVenta() {
-            if (carrito.length === 0) {
-                alert("El carrito está vacío.");
-                return;
-            }
-            const metodo = document.getElementById('metodo-pago').value;
-            alert(`¡Venta procesada con éxito!\nTotal: S/ ${total.toFixed(2)}\nMétodo: ${metodo}\n(Imprimiendo ticket y abriendo gaveta...)`);
+        function limpiarCarrito() {
             carrito = [];
             actualizarCarrito();
         }
+
+        function procesarCobro() {
+            if (carrito.length === 0) {
+                alert("No hay productos en la venta actual.");
+                return;
+            }
+            const metodo = document.getElementById('metodo-pago').value;
+            const total = document.getElementById('total-pagar').innerText;
+            alert(`¡Cobro exitoso!\nMétodo: ${metodo}\nTotal: ${total}\n\nImprimiendo ticket de venta...`);
+            limpiarCarrito();
+        }
+
+        // Inicializar menú al cargar
+        cargarMenu();
     </script>
 </body>
 </html>
