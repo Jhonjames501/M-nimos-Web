@@ -71,18 +71,32 @@
         </div>
     </div>
 
-    <!-- Modal para Agregar Nota al Plato -->
+    <!-- Modal para Agregar Cremas y Notas -->
     <div class="modal fade" id="modalNota" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="titulo-modal-producto">Añadir Nota</h5>
+                    <h5 class="modal-title" id="titulo-modal-producto">Personalizar Pedido</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="modal-producto-id">
-                    <label class="form-label text-muted">¿Alguna indicación especial? (Ej: Sin cremas, papas crocantes, etc.)</label>
-                    <input type="text" id="nota-producto" class="form-control" placeholder="Ej: Sin ají por favor">
+                    
+                    <label class="form-label fw-bold text-dark mb-2">Elige tus Cremas:</label>
+                    <div class="row g-2 mb-3" id="lista-cremas-checkbox">
+                        <div class="col-6"><div class="form-check"><input class="form-check-input crema-opcion" type="checkbox" value="Mayonesa" id="crema1"><label class="form-check-label" for="crema1">Mayonesa</label></div></div>
+                        <div class="col-6"><div class="form-check"><input class="form-check-input crema-opcion" type="checkbox" value="Ketchup" id="crema2"><label class="form-check-label" for="crema2">Ketchup</label></div></div>
+                        <div class="col-6"><div class="form-check"><input class="form-check-input crema-opcion" type="checkbox" value="Mostaza" id="crema3"><label class="form-check-label" for="crema3">Mostaza</label></div></div>
+                        <div class="col-6"><div class="form-check"><input class="form-check-input crema-opcion" type="checkbox" value="Aji" id="crema4"><label class="form-check-label" for="crema4">Ají</label></div></div>
+                        <div class="col-6"><div class="form-check"><input class="form-check-input crema-opcion" type="checkbox" value="Tartara" id="crema5"><label class="form-check-label" for="crema5">Tártara</label></div></div>
+                        <div class="col-6"><div class="form-check"><input class="form-check-input crema-opcion" type="checkbox" value="Golf" id="crema6"><label class="form-check-label" for="crema6">Golf</label></div></div>
+                        <div class="col-6"><div class="form-check"><input class="form-check-input crema-opcion" type="checkbox" value="Aceituna" id="crema7"><label class="form-check-label" for="crema7">Aceituna</label></div></div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-bold text-dark">Nota adicional (Opcional):</label>
+                        <input type="text" id="nota-producto" class="form-control" placeholder="Ej: Papas bien crocantes">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
@@ -173,8 +187,6 @@
 
         function filtrarCategoria(cat) {
             categoriaActual = cat;
-            
-            // Actualizar estilo de botones
             const botones = document.querySelectorAll('#filtro-categorias button');
             botones.forEach(btn => {
                 if(btn.innerText === cat) {
@@ -183,7 +195,6 @@
                     btn.className = "btn btn-outline-dark btn-sm flex-shrink-0";
                 }
             });
-
             cargarMenu();
         }
 
@@ -191,6 +202,7 @@
             const contenedor = document.getElementById('menu-productos');
             contenedor.innerHTML = '';
 
+            const agotados = JSON.parse(localStorage.getItem('platos_agotados')) || [];
             const prodsFiltrados = categoriaActual === 'Todos' 
                 ? productos 
                 : productos.filter(p => p.categoria === categoriaActual);
@@ -199,6 +211,9 @@
             rowDiv.className = 'row';
 
             prodsFiltrados.forEach(prod => {
+                // Si el plato está marcado como agotado en el admin, no se muestra
+                if (agotados.includes(prod.id)) return;
+
                 rowDiv.innerHTML += `
                     <div class="col-sm-6 mb-3">
                         <div class="card h-100 shadow-sm border-0 bg-white">
@@ -220,20 +235,36 @@
         function abrirModalNota(id) {
             const prod = productos.find(p => p.id === id);
             document.getElementById('modal-producto-id').value = id;
-            document.getElementById('titulo-modal-producto').innerText = `Añadir: ${prod.nombre}`;
+            document.getElementById('titulo-modal-producto').innerText = `Personalizar: ${prod.nombre}`;
             document.getElementById('nota-producto').value = '';
             
+            // Limpiar los checkboxes de cremas al abrir
+            document.querySelectorAll('.crema-opcion').forEach(el => el.checked = false);
+
             const modal = new bootstrap.Modal(document.getElementById('modalNota'));
             modal.show();
         }
 
         function confirmarAgregarConNota() {
             const id = parseInt(document.getElementById('modal-producto-id').value);
-            const nota = document.getElementById('nota-producto').value.trim();
+            const notaPersonalizada = document.getElementById('nota-producto').value.trim();
             const producto = productos.find(p => p.id === id);
 
-            // Creamos un identificador único por si piden el mismo plato con distinta nota
-            const itemUnicoId = `${id}-${nota}`;
+            // Recopilar cremas seleccionadas
+            let cremasSeleccionadas = [];
+            document.querySelectorAll('.crema-opcion:checked').forEach(el => {
+                cremasSeleccionadas.push(el.value);
+            });
+
+            let textoDetalle = "";
+            if (cremasSeleccionadas.length > 0) {
+                textoDetalle += `Cremas: ${cremasSeleccionadas.join(', ')}`;
+            }
+            if (notaPersonalizada) {
+                textoDetalle += (textoDetalle ? " | " : "") + `Nota: ${notaPersonalizada}`;
+            }
+
+            const itemUnicoId = `${id}-${textoDetalle}`;
             const itemEnCarrito = carrito.find(item => item.itemUnicoId === itemUnicoId);
 
             if (itemEnCarrito) {
@@ -245,7 +276,7 @@
                     nombre: producto.nombre,
                     precio: producto.precio,
                     cantidad: 1,
-                    nota: nota
+                    detalles: textoDetalle
                 });
             }
 
@@ -282,11 +313,11 @@
             carrito.forEach(item => {
                 let subtotal = item.precio * item.cantidad;
                 total += subtotal;
-                let textoNota = item.nota ? `<br><small class="text-danger">Nota: ${item.nota}</small>` : '';
+                let textoDetallesHtml = item.detalles ? `<br><small class="text-danger">${item.detalles}</small>` : '';
                 
                 tbody.innerHTML += `
                     <tr>
-                        <td style="font-size: 0.85rem;">${item.nombre} ${textoNota}</td>
+                        <td style="font-size: 0.85rem;">${item.nombre} ${textoDetallesHtml}</td>
                         <td>
                             <button class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="cambiarCantidad('${item.itemUnicoId}', -1)">-</button>
                             <span class="mx-1">${item.cantidad}</span>
