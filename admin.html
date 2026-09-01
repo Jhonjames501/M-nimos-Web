@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Pedidos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <div class="container my-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>👨‍🍳 Panel de Caja / Cocina</h2>
+            <button class="btn btn-outline-danger btn-sm" onclick="limpiarHistorial()">Borrar Historial</button>
+        </div>
+
+        <div class="row" id="contenedor-pedidos">
+            <!-- Los pedidos de los clientes aparecerán aquí automáticamente -->
+        </div>
+    </div>
+
+    <script>
+        function cargarPedidos() {
+            const contenedor = document.getElementById('contenedor-pedidos');
+            const pedidos = JSON.parse(localStorage.getItem('pedidos_restaurante')) || [];
+
+            contenedor.innerHTML = '';
+
+            if (pedidos.length === 0) {
+                contenedor.innerHTML = `<p class="text-center text-muted">No hay pedidos nuevos en este momento.</p>`;
+                return;
+            }
+
+            pedidos.forEach((p, index) => {
+                let listaItems = '';
+                p.items.forEach(item => {
+                    listaItems += `<li>${item.cantidad}x ${item.nombre} (S/ ${(item.precio * item.cantidad).toFixed(2)})</li>`;
+                });
+
+                contenedor.innerHTML += `
+                    <div class="col-md-4 mb-3">
+                        <div class="card shadow-sm border-warning">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">Pedido de: ${p.cliente}</h5>
+                                <h6 class="text-muted">Pago: ${p.metodo}</h6>
+                                <hr>
+                                <ul>${listaItems}</ul>
+                                <p class="fw-bold">Total: ${p.total}</p>
+                                <button class="btn btn-success btn-sm w-100" onclick="completarPedido(${p.id})">Marcar como Entregado / Cobrado</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function completarPedido(id) {
+            let pedidos = JSON.parse(localStorage.getItem('pedidos_restaurante')) || [];
+            pedidos = pedidos.filter(p => p.id !== id);
+            localStorage.setItem('pedidos_restaurante', JSON.stringify(pedidos));
+            cargarPedidos();
+        }
+
+        function limpiarHistorial() {
+            if (confirm("¿Estás seguro de borrar todos los pedidos?")) {
+                localStorage.removeItem('pedidos_restaurante');
+                cargarPedidos();
+            }
+        }
+
+        // Actualizar automáticamente la pantalla cada 3 segundos para ver si entra un pedido nuevo
+        setInterval(cargarPedidos, 3000);
+        cargarPedidos();
+    </script>
+</body>
+</html>
