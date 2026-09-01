@@ -14,10 +14,14 @@
             <p class="text-danger fst-italic">¡Condenados a comer rico!</p>
         </div>
 
+        <!-- Botones de Filtro por Categoría -->
+        <div class="d-flex overflow-auto pb-2 mb-3 gap-2" id="filtro-categorias">
+            <button class="btn btn-dark btn-sm flex-shrink-0 active" onclick="filtrarCategoria('Todos')">Ver Todo</button>
+        </div>
+
         <div class="row">
-            <!-- Menú por categorías -->
+            <!-- Menú de Productos -->
             <div class="col-lg-7 mb-4">
-                <h4 class="mb-3">Nuestra Carta</h4>
                 <div class="row" id="menu-productos"></div>
             </div>
 
@@ -67,9 +71,30 @@
         </div>
     </div>
 
+    <!-- Modal para Agregar Nota al Plato -->
+    <div class="modal fade" id="modalNota" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="titulo-modal-producto">Añadir Nota</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="modal-producto-id">
+                    <label class="form-label text-muted">¿Alguna indicación especial? (Ej: Sin cremas, papas crocantes, etc.)</label>
+                    <input type="text" id="nota-producto" class="form-control" placeholder="Ej: Sin ají por favor">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="confirmarAgregarConNota()">Agregar al Pedido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const productos = [
-            // Hamburguesas de Carne
             { id: 1, categoria: "Hamburguesas de Carne", nombre: "Clásica (Carne)", precio: 10.00 },
             { id: 2, categoria: "Hamburguesas de Carne", nombre: "Cheese Burguer", precio: 11.50 },
             { id: 3, categoria: "Hamburguesas de Carne", nombre: "Royal Burguer", precio: 13.00 },
@@ -77,7 +102,6 @@
             { id: 5, categoria: "Hamburguesas de Carne", nombre: "Mix Burguer", precio: 19.00 },
             { id: 6, categoria: "Hamburguesas de Carne", nombre: "Super Mix Burguer", precio: 21.00 },
 
-            // Hamburguesas de Pollo
             { id: 7, categoria: "Hamburguesas de Pollo", nombre: "Deshilachado Clásico", precio: 10.00 },
             { id: 8, categoria: "Hamburguesas de Pollo", nombre: "Cheese Chicken", precio: 11.50 },
             { id: 9, categoria: "Hamburguesas de Pollo", nombre: "Royal Chicken", precio: 13.00 },
@@ -85,13 +109,11 @@
             { id: 11, categoria: "Hamburguesas de Pollo", nombre: "Mix Chicken", precio: 19.00 },
             { id: 12, categoria: "Hamburguesas de Pollo", nombre: "Super Mix Chicken", precio: 21.00 },
 
-            // Hamburguesas de Chorizo
             { id: 13, categoria: "Hamburguesas de Chorizo", nombre: "Chorizo Clásico", precio: 12.00 },
             { id: 14, categoria: "Hamburguesas de Chorizo", nombre: "Cheese Chorizo", precio: 12.50 },
             { id: 15, categoria: "Hamburguesas de Chorizo", nombre: "Royal Chorizo", precio: 14.00 },
             { id: 16, categoria: "Hamburguesas de Chorizo", nombre: "Bacon Cheese Chorizo", precio: 17.00 },
 
-            // Broaster
             { id: 17, categoria: "Broaster", nombre: "Alita Broaster", precio: 11.00 },
             { id: 18, categoria: "Broaster", nombre: "Pierna o Encuentro", precio: 12.00 },
             { id: 19, categoria: "Broaster", nombre: "Pecho Broaster", precio: 14.00 },
@@ -100,7 +122,6 @@
             { id: 22, categoria: "Broaster", nombre: "1/2 de Pollo", precio: 40.00 },
             { id: 23, categoria: "Broaster", nombre: "1 Pollo Entero", precio: 76.00 },
 
-            // Salchipapas
             { id: 24, categoria: "Salchipapas", nombre: "Salchipapa Clásica", precio: 11.00 },
             { id: 25, categoria: "Salchipapas", nombre: "Clásica de Huevo", precio: 12.50 },
             { id: 26, categoria: "Salchipapas", nombre: "Salchi Chicken", precio: 16.00 },
@@ -108,7 +129,6 @@
             { id: 28, categoria: "Salchipapas", nombre: "Salchi Especial", precio: 19.00 },
             { id: 29, categoria: "Salchipapas", nombre: "Super Salchi Especial", precio: 20.00 },
 
-            // Enchiladas
             { id: 30, categoria: "Enchiladas", nombre: "Enchilada Hot Dog", precio: 13.00 },
             { id: 31, categoria: "Enchiladas", nombre: "Enchilada Carne", precio: 14.00 },
             { id: 32, categoria: "Enchiladas", nombre: "Enchilada Pollo", precio: 15.00 },
@@ -116,12 +136,10 @@
             { id: 34, categoria: "Enchiladas", nombre: "Enchilada Mixta", precio: 17.00 },
             { id: 35, categoria: "Enchiladas", nombre: "Enchilada Extravaganza", precio: 20.00 },
 
-            // Filete de Pechuga
             { id: 36, categoria: "Filete de Pechuga", nombre: "Filete Clásico", precio: 12.00 },
             { id: 37, categoria: "Filete de Pechuga", nombre: "Cheese Filete", precio: 13.00 },
             { id: 38, categoria: "Filete de Pechuga", nombre: "Royal Filete", precio: 15.00 },
 
-            // Adicionales
             { id: 39, categoria: "Adicionales", nombre: "Adicional Queso", precio: 2.00 },
             { id: 40, categoria: "Adicionales", nombre: "Adicional Huevo", precio: 2.00 },
             { id: 41, categoria: "Adicionales", nombre: "Adicional Tocino", precio: 5.00 },
@@ -131,7 +149,6 @@
             { id: 45, categoria: "Adicionales", nombre: "Adicional Filete de Pollo", precio: 6.00 },
             { id: 46, categoria: "Adicionales", nombre: "Adicional Pollo Deshilachado", precio: 5.00 },
 
-            // Bebidas
             { id: 47, categoria: "Bebidas", nombre: "Inca Kola 1.5 LT", precio: 8.50 },
             { id: 48, categoria: "Bebidas", nombre: "Coca Cola 1 LT", precio: 8.50 },
             { id: 49, categoria: "Bebidas", nombre: "Inca Kola Gordita", precio: 5.00 },
@@ -141,56 +158,110 @@
         ];
 
         let carrito = [];
+        let categoriaActual = 'Todos';
+
+        function inicializarFiltros() {
+            const contenedorFiltros = document.getElementById('filtro-categorias');
+            const categorias = ['Todos', ...new Set(productos.map(p => p.categoria))];
+            
+            categorias.forEach(cat => {
+                if(cat !== 'Todos') {
+                    contenedorFiltros.innerHTML += `<button class="btn btn-outline-dark btn-sm flex-shrink-0" onclick="filtrarCategoria('${cat}')">${cat}</button>`;
+                }
+            });
+        }
+
+        function filtrarCategoria(cat) {
+            categoriaActual = cat;
+            
+            // Actualizar estilo de botones
+            const botones = document.querySelectorAll('#filtro-categorias button');
+            botones.forEach(btn => {
+                if(btn.innerText === cat) {
+                    btn.className = "btn btn-dark btn-sm flex-shrink-0 active";
+                } else {
+                    btn.className = "btn btn-outline-dark btn-sm flex-shrink-0";
+                }
+            });
+
+            cargarMenu();
+        }
 
         function cargarMenu() {
             const contenedor = document.getElementById('menu-productos');
             contenedor.innerHTML = '';
 
-            // Agrupar por categoría
-            const categorias = [...new Set(productos.map(p => p.categoria))];
+            const prodsFiltrados = categoriaActual === 'Todos' 
+                ? productos 
+                : productos.filter(p => p.categoria === categoriaActual);
 
-            categorias.forEach(cat => {
-                contenedor.innerHTML += `<h5 class="text-primary mt-3 border-bottom pb-1">${cat}</h5>`;
-                let rowDiv = document.createElement('div');
-                rowDiv.className = 'row';
+            let rowDiv = document.createElement('div');
+            rowDiv.className = 'row';
 
-                const prodsCat = productos.filter(p => p.categoria === cat);
-                prodsCat.forEach(prod => {
-                    rowDiv.innerHTML += `
-                        <div class="col-sm-6 mb-3">
-                            <div class="card h-100 shadow-sm border-0 bg-white">
-                                <div class="card-body d-flex flex-column justify-content-between p-3">
-                                    <div>
-                                        <h6 class="card-title fw-bold mb-1">${prod.nombre}</h6>
-                                        <p class="text-muted fw-bold mb-2">S/ ${prod.precio.toFixed(2)}</p>
-                                    </div>
-                                    <button class="btn btn-outline-primary btn-sm w-100" onclick="agregarAlCarrito(${prod.id})">+ Agregar</button>
+            prodsFiltrados.forEach(prod => {
+                rowDiv.innerHTML += `
+                    <div class="col-sm-6 mb-3">
+                        <div class="card h-100 shadow-sm border-0 bg-white">
+                            <div class="card-body d-flex flex-column justify-content-between p-3">
+                                <div>
+                                    <span class="badge bg-light text-secondary mb-1" style="font-size: 0.7rem;">${prod.categoria}</span>
+                                    <h6 class="card-title fw-bold mb-1">${prod.nombre}</h6>
+                                    <p class="text-muted fw-bold mb-2">S/ ${prod.precio.toFixed(2)}</p>
                                 </div>
+                                <button class="btn btn-outline-primary btn-sm w-100" onclick="abrirModalNota(${prod.id})">+ Agregar</button>
                             </div>
                         </div>
-                    `;
-                });
-                contenedor.appendChild(rowDiv);
+                    </div>
+                `;
             });
+            contenedor.appendChild(rowDiv);
         }
 
-        function agregarAlCarrito(id) {
+        function abrirModalNota(id) {
+            const prod = productos.find(p => p.id === id);
+            document.getElementById('modal-producto-id').value = id;
+            document.getElementById('titulo-modal-producto').innerText = `Añadir: ${prod.nombre}`;
+            document.getElementById('nota-producto').value = '';
+            
+            const modal = new bootstrap.Modal(document.getElementById('modalNota'));
+            modal.show();
+        }
+
+        function confirmarAgregarConNota() {
+            const id = parseInt(document.getElementById('modal-producto-id').value);
+            const nota = document.getElementById('nota-producto').value.trim();
             const producto = productos.find(p => p.id === id);
-            const itemEnCarrito = carrito.find(item => item.id === id);
+
+            // Creamos un identificador único por si piden el mismo plato con distinta nota
+            const itemUnicoId = `${id}-${nota}`;
+            const itemEnCarrito = carrito.find(item => item.itemUnicoId === itemUnicoId);
+
             if (itemEnCarrito) {
                 itemEnCarrito.cantidad++;
             } else {
-                carrito.push({ ...producto, cantidad: 1 });
+                carrito.push({
+                    itemUnicoId: itemUnicoId,
+                    id: producto.id,
+                    nombre: producto.nombre,
+                    precio: producto.precio,
+                    cantidad: 1,
+                    nota: nota
+                });
             }
+
+            const modalEl = document.getElementById('modalNota');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+
             actualizarCarrito();
         }
 
-        function cambiarCantidad(id, cambio) {
-            const item = carrito.find(p => p.id === id);
+        function cambiarCantidad(itemUnicoId, cambio) {
+            const item = carrito.find(p => p.itemUnicoId === itemUnicoId);
             if (item) {
                 item.cantidad += cambio;
                 if (item.cantidad <= 0) {
-                    carrito = carrito.filter(p => p.id !== id);
+                    carrito = carrito.filter(p => p.itemUnicoId !== itemUnicoId);
                 }
             }
             actualizarCarrito();
@@ -211,16 +282,18 @@
             carrito.forEach(item => {
                 let subtotal = item.precio * item.cantidad;
                 total += subtotal;
+                let textoNota = item.nota ? `<br><small class="text-danger">Nota: ${item.nota}</small>` : '';
+                
                 tbody.innerHTML += `
                     <tr>
-                        <td style="font-size: 0.9rem;">${item.nombre}</td>
+                        <td style="font-size: 0.85rem;">${item.nombre} ${textoNota}</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="cambiarCantidad(${item.id}, -1)">-</button>
+                            <button class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="cambiarCantidad('${item.itemUnicoId}', -1)">-</button>
                             <span class="mx-1">${item.cantidad}</span>
-                            <button class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="cambiarCantidad(${item.id}, 1)">+</button>
+                            <button class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="cambiarCantidad('${item.itemUnicoId}', 1)">+</button>
                         </td>
-                        <td style="font-size: 0.9rem;">S/ ${subtotal.toFixed(2)}</td>
-                        <td><button class="btn btn-danger btn-sm py-0 px-1" onclick="cambiarCantidad(${item.id}, -${item.cantidad})">&times;</button></td>
+                        <td style="font-size: 0.85rem;">S/ ${subtotal.toFixed(2)}</td>
+                        <td><button class="btn btn-danger btn-sm py-0 px-1" onclick="cambiarCantidad('${item.itemUnicoId}', -${item.cantidad})">&times;</button></td>
                     </tr>
                 `;
             });
@@ -257,6 +330,7 @@
             actualizarCarrito();
         }
 
+        inicializarFiltros();
         actualizarCarrito();
         cargarMenu();
     </script>
