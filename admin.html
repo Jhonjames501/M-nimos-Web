@@ -58,7 +58,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="text-muted small">Selecciona los platos que ya no tienen stock para ocultarlos automáticamente de la carta del cliente.</p>
+                    <p class="text-muted small">Selecciona los platos sin stock para ocultarlos automáticamente de la carta del cliente.</p>
                     <div id="lista-gestion-agotados" style="max-height: 300px; overflow-y: auto;" class="list-group"></div>
                 </div>
                 <div class="modal-footer">
@@ -70,7 +70,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Lista completa de productos sincronizada con la carta
         const productosBase = [
             { id: 1, nombre: "Clásica (Carne)" }, { id: 2, nombre: "Cheese Burguer" }, { id: 3, nombre: "Royal Burguer" }, { id: 4, nombre: "Bacon Cheese Burger" }, { id: 5, nombre: "Mix Burguer" }, { id: 6, nombre: "Super Mix Burguer" },
             { id: 7, nombre: "Deshilachado Clásico" }, { id: 8, nombre: "Cheese Chicken" }, { id: 9, nombre: "Royal Chicken" }, { id: 10, nombre: "Bacon Cheese Chicken" }, { id: 11, nombre: "Mix Chicken" }, { id: 12, nombre: "Super Mix Chicken" },
@@ -89,9 +88,8 @@
             const pedidos = JSON.parse(localStorage.getItem('pedidos_restaurante')) || [];
             const contenedor = document.getElementById('contenedor-pedidos');
             
-            // Alerta sonora si entra un pedido nuevo
             if (pedidos.length > cantidadPedidosAnterior && cantidadPedidosAnterior !== 0) {
-                document.getElementById('audioAlerta').play().catch(e => console.log("Audio bloqueado por navegador"));
+                document.getElementById('audioAlerta').play().catch(e => console.log("Audio bloqueado"));
             }
             cantidadPedidosAnterior = pedidos.length;
 
@@ -105,22 +103,20 @@
             }
 
             let totalVentas = 0;
-            let totalPedidosCount = pedidos.length;
 
             pedidos.forEach((pedido) => {
-                // Calcular valor numérico para la estadística
                 let numTotal = parseFloat(pedido.total.replace('S/', '').trim()) || 0;
                 totalVentas += numTotal;
 
                 let estadoClase = 'warning';
                 if (pedido.estado === 'En Preparación') estadoClase = 'info';
                 if (pedido.estado === 'Listo') estadoClase = 'success';
-                if (pedido.estado === 'Entregado') estadoClase = 'secondary';
 
                 let itemsHtml = '';
                 pedido.items.forEach(item => {
-                    let notaTxt = item.nota ? `<br><small class="text-danger fw-bold">Nota: ${item.nota}</small>` : '';
-                    itemsHtml += `<li>${item.cantidad}x ${item.nombre} (S/ ${(item.precio * item.cantidad).toFixed(2)})${notaTxt}</li>`;
+                    // Aquí leemos correctamente los detalles (cremas y notas) que envía el cliente
+                    let detallesTxt = item.detalles ? `<br><small class="text-danger fw-bold">👉 ${item.detalles}</small>` : '';
+                    itemsHtml += `<li class="mb-2"><strong>${item.cantidad}x ${item.nombre}</strong> (S/ ${(item.precio * item.cantidad).toFixed(2)})${detallesTxt}</li>`;
                 });
 
                 contenedor.innerHTML += `
@@ -129,7 +125,7 @@
                             <div class="card-body d-flex flex-column justify-content-between">
                                 <div>
                                     <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h5 class="fw-bold m-0">${pedido.cliente}</h5>
+                                        <h5 class="fw-bold m-0 text-primary">${pedido.cliente}</h5>
                                         <span class="badge bg-${estadoClase}">${pedido.estado || 'Pendiente'}</span>
                                     </div>
                                     <p class="text-muted small mb-2"><i class="fas fa-wallet"></i> Pago: ${pedido.metodo}</p>
@@ -149,7 +145,7 @@
                                     </div>
                                     <div class="d-flex gap-1">
                                         <button class="btn btn-success btn-sm w-100" onclick="marcarEntregado(${pedido.id})">Cobrar / Finalizar</button>
-                                        <button class="btn btn-outline-secondary btn-sm" onclick="imprimirComanda('${pedido.cliente}', '${pedido.total}')"><i class="fas fa-print"></i></button>
+                                        <button class="btn btn-outline-secondary btn-sm" onclick="window.print()"><i class="fas fa-print"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -158,7 +154,7 @@
                 `;
             });
 
-            document.getElementById('total-pedidos-hoy').innerText = totalPedidosCount;
+            document.getElementById('total-pedidos-hoy').innerText = pedidos.length;
             document.getElementById('total-ventas-hoy').innerText = `S/ ${totalVentas.toFixed(2)}`;
         }
 
@@ -174,7 +170,6 @@
 
         function marcarEntregado(id) {
             let pedidos = JSON.parse(localStorage.getItem('pedidos_restaurante')) || [];
-            // Elimina el pedido completado
             pedidos = pedidos.filter(p => p.id !== id);
             localStorage.setItem('pedidos_restaurante', JSON.stringify(pedidos));
             cargarAdmin();
@@ -185,10 +180,6 @@
                 localStorage.removeItem('pedidos_restaurante');
                 cargarAdmin();
             }
-        }
-
-        function imprimirComanda(cliente, total) {
-            window.print();
         }
 
         function cargarListaAgotadosModal() {
@@ -219,7 +210,6 @@
 
         document.getElementById('modalAgotados').addEventListener('show.bs.modal', cargarListaAgotadosModal);
 
-        // Actualizar automáticamente cada 4 segundos para recibir pedidos nuevos
         setInterval(cargarAdmin, 4000);
         cargarAdmin();
     </script>
