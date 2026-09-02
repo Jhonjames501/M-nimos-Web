@@ -13,51 +13,104 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f4f6f9;
+            background-color: #0f0f0f;
+            color: #f8f9fa;
         }
         .header-cartel {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            background: linear-gradient(135deg, #141414 0%, #1f1f1f 100%);
             color: white;
             border-bottom: 4px solid #ffc107;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
         .card-producto {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            border: none;
-            border-radius: 12px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            border: 1px solid rgba(255,255,255,0.08);
+            background-color: #1a1a1a !important;
+            border-radius: 16px;
             overflow: hidden;
         }
         .card-producto:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(255, 193, 7, 0.15);
+            border-color: #ffc107;
         }
         .btn-cartel {
-            background-color: #ffc107;
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
             color: #000;
-            font-weight: 600;
+            font-weight: 700;
             border: none;
+            box-shadow: 0 4px 10px rgba(255, 193, 7, 0.3);
+            transition: all 0.2s ease;
         }
         .btn-cartel:hover {
-            background-color: #e0a800;
+            background: linear-gradient(135deg, #ffca2c 0%, #f57c00 100%);
             color: #000;
+            transform: scale(1.02);
         }
         .badge-categoria {
             font-size: 0.75rem;
             letter-spacing: 0.5px;
+            background-color: #2b2b2b !important;
+            color: #ffc107 !important;
         }
         .carrito-card {
-            border: none;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            background-color: #1a1a1a !important;
+            color: #fff;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        .form-control, .form-select {
+            background-color: #2b2b2b !important;
+            color: #fff !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #ffc107 !important;
+            box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+        }
+        .table {
+            color: #f8f9fa !important;
+        }
+        .table-light {
+            background-color: #2b2b2b !important;
+            color: #ffc107 !important;
+        }
+        /* Contenedor dinámico de Yape */
+        .yape-box-card {
+            background: linear-gradient(135deg, #741584 0%, #510d5c 100%);
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 15px;
+            text-align: center;
+            color: white;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(116, 21, 132, 0.4);
+        }
+        .btn-whatsapp-yape {
+            display: block;
+            background-color: #25d366;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .btn-whatsapp-yape:hover {
+            background-color: #1ebd5b;
+            color: white;
         }
     </style>
 </head>
 <body>
 
     <!-- Encabezado Estilizado -->
-    <header class="header-cartel py-4 mb-4 shadow">
+    <header class="header-cartel py-4 mb-4">
         <div class="container text-center">
-            <h1 class="fw-bold mb-1"><i class="fas fa-burger text-warning me-2"></i>EL CÁRTEL</h1>
-            <p class="text-warning mb-0 fs-5 fw-light">del buen sabor</p>
+            <h1 class="fw-bold mb-1 text-warning"><i class="fas fa-burger me-2"></i>EL CÁRTEL</h1>
+            <p class="text-light mb-0 fs-5 fw-light">del buen sabor</p>
             <span class="badge bg-danger mt-2 px-3 py-1 fst-italic">¡Condenados a comer rico!</span>
         </div>
     </header>
@@ -65,7 +118,7 @@
     <div class="container mb-5">
         <!-- Filtros por Categoría Modernos -->
         <div class="d-flex overflow-auto pb-3 mb-4 gap-2" id="filtro-categorias" style="white-space: nowrap;">
-            <button class="btn btn-dark btn-sm rounded-pill px-3 active shadow-sm" onclick="filtrarCategoria('Todos')"><i class="fas fa-th-large me-1"></i> Ver Todo</button>
+            <button class="btn btn-warning btn-sm rounded-pill px-3 active fw-bold shadow-sm" onclick="filtrarCategoria('Todos')"><i class="fas fa-th-large me-1"></i> Ver Todo</button>
         </div>
 
         <div class="row g-4">
@@ -76,18 +129,18 @@
 
             <!-- Resumen del Pedido (Carrito) -->
             <div class="col-lg-5">
-                <div class="card carrito-card sticky-top bg-white p-3" style="top: 20px;">
+                <div class="card carrito-card sticky-top p-3" style="top: 20px;">
                     <div class="card-body">
-                        <h4 class="card-title fw-bold mb-3"><i class="fas fa-receipt text-warning me-2"></i>Tu Pedido Actual</h4>
+                        <h4 class="card-title fw-bold mb-3 text-warning"><i class="fas fa-receipt me-2"></i>Tu Pedido Actual</h4>
                         
                         <div class="mb-3">
-                            <label class="form-label fw-semibold small text-muted"><i class="fas fa-user-tag me-1"></i> Número de Mesa o Nombre:</label>
-                            <input type="text" id="nombre-cliente" class="form-control form-control-lg bg-light border-0" placeholder="Ej: Mesa 4 o Juan Pérez">
+                            <label class="form-label fw-semibold small text-light"><i class="fas fa-user-tag me-1 text-warning"></i> Número de Mesa o Nombre:</label>
+                            <input type="text" id="nombre-cliente" class="form-control form-control-lg border-0" placeholder="Ej: Mesa 4 o Juan Pérez">
                         </div>
 
-                        <div class="table-responsive mb-3" style="max-height: 260px; overflow-y: auto;">
+                        <div class="table-responsive mb-3" style="max-height: 240px; overflow-y: auto;">
                             <table class="table table-sm align-middle">
-                                <thead class="table-light">
+                                <thead class="table-light rounded">
                                     <tr>
                                         <th class="ps-2">Item</th>
                                         <th>Cant</th>
@@ -99,20 +152,31 @@
                             </table>
                         </div>
 
-                        <div class="bg-light p-3 rounded-3 mb-3">
+                        <div class="bg-dark p-3 rounded-3 mb-3 border border-secondary">
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="fw-bold fs-5">Total a Pagar:</span>
-                                <span id="total-pagar" class="text-success fw-bold fs-4">S/ 0.00</span>
+                                <span id="total-pagar" class="text-warning fw-bold fs-4">S/ 0.00</span>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold small text-muted"><i class="fas fa-wallet me-1"></i> Método de Pago:</label>
-                            <select id="metodo-pago" class="form-select bg-light border-0">
+                            <label class="form-label fw-semibold small text-light"><i class="fas fa-wallet me-1 text-warning"></i> Método de Pago:</label>
+                            <select id="metodo-pago" class="form-select border-0" onchange="verificarMetodoPago()">
                                 <option value="Efectivo al recibir">💵 Efectivo al recibir</option>
                                 <option value="Yape / Plin">📱 Yape / Plin (BCP)</option>
                                 <option value="Tarjeta POS">💳 Tarjeta POS</option>
                             </select>
+                        </div>
+
+                        <!-- Sección Interactiva de Yape que aparece al seleccionarlo -->
+                        <div id="seccion-yape" style="display: none;" class="yape-box-card mb-3">
+                            <h6 class="fw-bold mb-1">Escanea para Yapear</h6>
+                            <p class="small mb-2 text-light" style="font-size: 0.8rem;">Titular: <strong>Jhon James Espinoza Hoyos</strong></p>
+                            <img src="9986_2.png" alt="QR Yape" style="width: 140px; border-radius: 8px; background: white; padding: 5px;" class="mb-2">
+                            <p class="small mb-1" style="font-size: 0.75rem;">Manda tu captura al WhatsApp:</p>
+                            <a id="btn-wsp-yape" href="#" target="_blank" class="btn-whatsapp-yape">
+                                <i class="fab fa-whatsapp me-1"></i> Enviar Comprobante (+51 996887022)
+                            </a>
                         </div>
 
                         <div class="d-grid">
@@ -129,32 +193,32 @@
     <!-- Modal para Agregar Cremas y Notas -->
     <div class="modal fade" id="modalNota" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4">
-                <div class="modal-header bg-dark text-white rounded-top-4">
-                    <h5 class="modal-title fw-bold" id="titulo-modal-producto">Personalizar Pedido</h5>
+            <div class="modal-content border-0 shadow-lg rounded-4 bg-dark text-white">
+                <div class="modal-header border-secondary rounded-top-4">
+                    <h5 class="modal-title fw-bold text-warning" id="titulo-modal-producto">Personalizar Pedido</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
                     <input type="hidden" id="modal-producto-id">
                     
-                    <label class="form-label fw-bold text-dark mb-3"><i class="fas fa-bottle-droplet text-warning me-1"></i> Elige tus Cremas:</label>
+                    <label class="form-label fw-bold text-warning mb-3"><i class="fas fa-bottle-droplet me-1"></i> Elige tus Cremas:</label>
                     <div class="row g-2 mb-4" id="lista-cremas-checkbox">
-                        <div class="col-6"><div class="form-check p-2 bg-light rounded"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Mayonesa" id="crema1"><label class="form-check-label ms-2 fw-medium" for="crema1">Mayonesa</label></div></div>
-                        <div class="col-6"><div class="form-check p-2 bg-light rounded"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Ketchup" id="crema2"><label class="form-check-label ms-2 fw-medium" for="crema2">Ketchup</label></div></div>
-                        <div class="col-6"><div class="form-check p-2 bg-light rounded"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Mostaza" id="crema3"><label class="form-check-label ms-2 fw-medium" for="crema3">Mostaza</label></div></div>
-                        <div class="col-6"><div class="form-check p-2 bg-light rounded"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Aji" id="crema4"><label class="form-check-label ms-2 fw-medium" for="crema4">Ají</label></div></div>
-                        <div class="col-6"><div class="form-check p-2 bg-light rounded"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Tartara" id="crema5"><label class="form-check-label ms-2 fw-medium" for="crema5">Tártara</label></div></div>
-                        <div class="col-6"><div class="form-check p-2 bg-light rounded"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Golf" id="crema6"><label class="form-check-label ms-2 fw-medium" for="crema6">Golf</label></div></div>
-                        <div class="col-12"><div class="form-check p-2 bg-light rounded"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Aceituna" id="crema7"><label class="form-check-label ms-2 fw-medium" for="crema7">Aceituna</label></div></div>
+                        <div class="col-6"><div class="form-check p-2 bg-secondary bg-opacity-25 rounded border border-secondary"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Mayonesa" id="crema1"><label class="form-check-label ms-2 fw-medium" for="crema1">Mayonesa</label></div></div>
+                        <div class="col-6"><div class="form-check p-2 bg-secondary bg-opacity-25 rounded border border-secondary"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Ketchup" id="crema2"><label class="form-check-label ms-2 fw-medium" for="crema2">Ketchup</label></div></div>
+                        <div class="col-6"><div class="form-check p-2 bg-secondary bg-opacity-25 rounded border border-secondary"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Mostaza" id="crema3"><label class="form-check-label ms-2 fw-medium" for="crema3">Mostaza</label></div></div>
+                        <div class="col-6"><div class="form-check p-2 bg-secondary bg-opacity-25 rounded border border-secondary"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Aji" id="crema4"><label class="form-check-label ms-2 fw-medium" for="crema4">Ají</label></div></div>
+                        <div class="col-6"><div class="form-check p-2 bg-secondary bg-opacity-25 rounded border border-secondary"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Tartara" id="crema5"><label class="form-check-label ms-2 fw-medium" for="crema5">Tártara</label></div></div>
+                        <div class="col-6"><div class="form-check p-2 bg-secondary bg-opacity-25 rounded border border-secondary"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Golf" id="crema6"><label class="form-check-label ms-2 fw-medium" for="crema6">Golf</label></div></div>
+                        <div class="col-12"><div class="form-check p-2 bg-secondary bg-opacity-25 rounded border border-secondary"><input class="form-check-input crema-opcion ms-1" type="checkbox" value="Aceituna" id="crema7"><label class="form-check-label ms-2 fw-medium" for="crema7">Aceituna</label></div></div>
                     </div>
 
                     <div class="mb-2">
-                        <label class="form-label fw-bold text-dark"><i class="fas fa-comment-alt text-warning me-1"></i> Nota adicional (Opcional):</label>
-                        <input type="text" id="nota-producto" class="form-control bg-light border-0" placeholder="Ej: Sin cebolla, papas crocantes">
+                        <label class="form-label fw-bold text-warning"><i class="fas fa-comment-alt me-1"></i> Nota adicional (Opcional):</label>
+                        <input type="text" id="nota-producto" class="form-control border-0" placeholder="Ej: Sin cebolla, papas crocantes">
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-outline-light px-4 rounded-pill" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-cartel px-4 rounded-pill fw-bold" onclick="confirmarAgregarConNota()">Agregar al Pedido</button>
                 </div>
             </div>
@@ -236,7 +300,7 @@
             
             categorias.forEach(cat => {
                 if(cat !== 'Todos') {
-                    contenedorFiltros.innerHTML += `<button class="btn btn-outline-dark btn-sm rounded-pill px-3 shadow-sm" onclick="filtrarCategoria('${cat}')">${cat}</button>`;
+                    contenedorFiltros.innerHTML += `<button class="btn btn-outline-warning btn-sm rounded-pill px-3 shadow-sm" onclick="filtrarCategoria('${cat}')">${cat}</button>`;
                 }
             });
         }
@@ -246,9 +310,9 @@
             const botones = document.querySelectorAll('#filtro-categorias button');
             botones.forEach(btn => {
                 if(btn.innerText.includes(cat) || (cat === 'Todos' && btn.innerText.includes('Ver Todo'))) {
-                    btn.className = "btn btn-dark btn-sm rounded-pill px-3 active shadow-sm";
+                    btn.className = "btn btn-warning btn-sm rounded-pill px-3 active fw-bold shadow-sm";
                 } else {
-                    btn.className = "btn btn-outline-dark btn-sm rounded-pill px-3 shadow-sm";
+                    btn.className = "btn btn-outline-warning btn-sm rounded-pill px-3 shadow-sm";
                 }
             });
             cargarMenu();
@@ -268,14 +332,14 @@
 
                 contenedor.innerHTML += `
                     <div class="col-sm-6">
-                        <div class="card card-producto h-100 bg-white p-2">
+                        <div class="card card-producto h-100 p-2">
                             <div class="card-body d-flex flex-column justify-content-between p-3">
                                 <div>
-                                    <span class="badge bg-light text-muted border mb-2 badge-categoria rounded-pill px-2 py-1">${prod.categoria}</span>
-                                    <h6 class="card-title fw-bold text-dark mb-1">${prod.nombre}</h6>
-                                    <p class="text-success fw-bold fs-5 mb-3">S/ ${prod.precio.toFixed(2)}</p>
+                                    <span class="badge badge-categoria border mb-2 rounded-pill px-2 py-1">${prod.categoria}</span>
+                                    <h6 class="card-title fw-bold text-white mb-1">${prod.nombre}</h6>
+                                    <p class="text-warning fw-bold fs-5 mb-3">S/ ${prod.precio.toFixed(2)}</p>
                                 </div>
-                                <button class="btn btn-outline-dark btn-sm w-100 rounded-pill py-2 fw-semibold" onclick="abrirModalNota(${prod.id})">
+                                <button class="btn btn-outline-warning btn-sm w-100 rounded-pill py-2 fw-semibold" onclick="abrirModalNota(${prod.id})">
                                     <i class="fas fa-plus-circle me-1"></i> Agregar
                                 </button>
                             </div>
@@ -358,28 +422,47 @@
             if (carrito.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">Aún no hay productos seleccionados</td></tr>`;
                 spanTotal.innerText = `S/ 0.00`;
+                actualizarEnlaceWhatsAppYape(0);
                 return;
             }
 
             carrito.forEach(item => {
                 let subtotal = item.precio * item.cantidad;
                 total += subtotal;
-                let textoDetallesHtml = item.detalles ? `<br><small class="text-danger fw-semibold">👉 ${item.detalles}</small>` : '';
+                let textoDetallesHtml = item.detalles ? `<br><small class="text-warning fw-semibold">👉 ${item.detalles}</small>` : '';
                 
                 tbody.innerHTML += `
                     <tr>
-                        <td class="ps-2" style="font-size: 0.85rem;">${item.nombre} ${textoDetallesHtml}</td>
+                        <td class="ps-2 text-light" style="font-size: 0.85rem;">${item.nombre} ${textoDetallesHtml}</td>
                         <td style="white-space: nowrap;">
-                            <button class="btn btn-sm btn-outline-dark py-0 px-1 rounded-circle" onclick="cambiarCantidad('${item.itemUnicoId}', -1)">-</button>
-                            <span class="mx-1 fw-bold">${item.cantidad}</span>
-                            <button class="btn btn-sm btn-outline-dark py-0 px-1 rounded-circle" onclick="cambiarCantidad('${item.itemUnicoId}', 1)">+</button>
+                            <button class="btn btn-sm btn-outline-warning py-0 px-1 rounded-circle" onclick="cambiarCantidad('${item.itemUnicoId}', -1)">-</button>
+                            <span class="mx-1 fw-bold text-white">${item.cantidad}</span>
+                            <button class="btn btn-sm btn-outline-warning py-0 px-1 rounded-circle" onclick="cambiarCantidad('${item.itemUnicoId}', 1)">+</button>
                         </td>
-                        <td style="font-size: 0.85rem;" class="fw-semibold">S/ ${subtotal.toFixed(2)}</td>
+                        <td style="font-size: 0.85rem;" class="fw-semibold text-warning">S/ ${subtotal.toFixed(2)}</td>
                         <td><button class="btn btn-outline-danger btn-sm py-0 px-1 border-0" onclick="cambiarCantidad('${item.itemUnicoId}', -${item.cantidad})"><i class="fas fa-trash-alt"></i></button></td>
                     </tr>
                 `;
             });
             spanTotal.innerText = `S/ ${total.toFixed(2)}`;
+            actualizarEnlaceWhatsAppYape(total);
+        }
+
+        function verificarMetodoPago() {
+            const metodo = document.getElementById('metodo-pago').value;
+            const seccionYape = document.getElementById('seccion-yape');
+            if (metodo.includes('Yape')) {
+                seccionYape.style.display = 'block';
+            } else {
+                seccionYape.style.display = 'none';
+            }
+        }
+
+        function actualizarEnlaceWhatsAppYape(total) {
+            const cliente = document.getElementById('nombre-cliente').value || "Cliente";
+            let mensaje = `Hola, soy ${cliente}. Adjunto mi comprobante de Yape por el total de S/ ${total.toFixed(2)} para confirmar mi pedido en El Cártel.`;
+            let urlWsp = `https://wa.me/51996887022?text=${encodeURIComponent(mensaje)}`;
+            document.getElementById('btn-wsp-yape').href = urlWsp;
         }
 
         function enviarPedido() {
@@ -411,6 +494,11 @@
             document.getElementById('nombre-cliente').value = '';
             actualizarCarrito();
         }
+
+        document.getElementById('nombre-cliente').addEventListener('input', () => {
+            const total = parseFloat(document.getElementById('total-pagar').innerText.replace('S/', '').trim()) || 0;
+            actualizarEnlaceWhatsAppYape(total);
+        });
 
         inicializarFiltros();
         actualizarCarrito();
