@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Cártel del Buen Sabor - Menú Digital</title>
+    <title>El Cártel del Buen Sabor - POS Digital</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome para Iconos -->
@@ -76,7 +76,6 @@
             background-color: #2b2b2b !important;
             color: #ffc107 !important;
         }
-        /* Contenedor dinámico de Yape */
         .yape-box-card {
             background: linear-gradient(135deg, #741584 0%, #510d5c 100%);
             border-radius: 12px;
@@ -109,14 +108,14 @@
     <!-- Encabezado Estilizado -->
     <header class="header-cartel py-4 mb-4">
         <div class="container text-center">
-            <h1 class="fw-bold mb-1 text-warning"><i class="fas fa-burger me-2"></i>EL CÁRTEL</h1>
-            <p class="text-light mb-0 fs-5 fw-light">del buen sabor</p>
+            <h1 class="fw-bold mb-1 text-warning"><i class="fas fa-cash-register me-2"></i>EL CÁRTEL</h1>
+            <p class="text-light mb-0 fs-5 fw-light">Punto de Venta - POS Digital</p>
             <span class="badge bg-danger mt-2 px-3 py-1 fst-italic">¡Condenados a comer rico!</span>
         </div>
     </header>
 
     <div class="container mb-5">
-        <!-- Filtros por Categoría Modernos -->
+        <!-- Filtros por Categoría -->
         <div class="d-flex overflow-auto pb-3 mb-4 gap-2" id="filtro-categorias" style="white-space: nowrap;">
             <button class="btn btn-warning btn-sm rounded-pill px-3 active fw-bold shadow-sm" onclick="filtrarCategoria('Todos')"><i class="fas fa-th-large me-1"></i> Ver Todo</button>
         </div>
@@ -127,18 +126,30 @@
                 <div class="row g-3" id="menu-productos"></div>
             </div>
 
-            <!-- Resumen del Pedido (Carrito) -->
+            <!-- Resumen del POS / Carrito -->
             <div class="col-lg-5">
                 <div class="card carrito-card sticky-top p-3" style="top: 20px;">
                     <div class="card-body">
-                        <h4 class="card-title fw-bold mb-3 text-warning"><i class="fas fa-receipt me-2"></i>Tu Pedido Actual</h4>
+                        <h4 class="card-title fw-bold mb-3 text-warning"><i class="fas fa-receipt me-2"></i>Terminal POS</h4>
                         
+                        <!-- Tipo de Servicio -->
                         <div class="mb-3">
-                            <label class="form-label fw-semibold small text-light"><i class="fas fa-user-tag me-1 text-warning"></i> Número de Mesa o Nombre:</label>
+                            <label class="form-label fw-semibold small text-light"><i class="fas fa-concierge-bell me-1 text-warning"></i> Tipo de Servicio:</label>
+                            <select id="tipo-servicio" class="form-select border-0" onchange="cambiarTipoServicio()">
+                                <option value="Local">🍽️ Consumo en Local (Mesa)</option>
+                                <option value="Llevar">🛍️ Para Llevar</option>
+                                <option value="Delivery">🛵 Delivery</option>
+                            </select>
+                        </div>
+
+                        <!-- Datos del Cliente / Mesa -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small text-light" id="label-cliente"><i class="fas fa-user-tag me-1 text-warning"></i> N° de Mesa o Nombre:</label>
                             <input type="text" id="nombre-cliente" class="form-control form-control-lg border-0" placeholder="Ej: Mesa 4 o Juan Pérez">
                         </div>
 
-                        <div class="table-responsive mb-3" style="max-height: 240px; overflow-y: auto;">
+                        <!-- Detalle de Ítems -->
+                        <div class="table-responsive mb-3" style="max-height: 220px; overflow-y: auto;">
                             <table class="table table-sm align-middle">
                                 <thead class="table-light rounded">
                                     <tr>
@@ -159,29 +170,30 @@
                             </div>
                         </div>
 
+                        <!-- Método de Pago -->
                         <div class="mb-3">
                             <label class="form-label fw-semibold small text-light"><i class="fas fa-wallet me-1 text-warning"></i> Método de Pago:</label>
                             <select id="metodo-pago" class="form-select border-0" onchange="verificarMetodoPago()">
-                                <option value="Efectivo al recibir">💵 Efectivo al recibir</option>
+                                <option value="Efectivo al recibir">💵 Efectivo</option>
                                 <option value="Yape / Plin">📱 Yape / Plin (BCP)</option>
                                 <option value="Tarjeta POS">💳 Tarjeta POS</option>
                             </select>
                         </div>
 
-                        <!-- Sección Interactiva de Yape que aparece al seleccionarlo -->
+                        <!-- Sección Interactiva de Yape -->
                         <div id="seccion-yape" style="display: none;" class="yape-box-card mb-3">
                             <h6 class="fw-bold mb-1">Escanea para Yapear</h6>
-                            <p class="small mb-2 text-light" style="font-size: 0.8rem;">Titular: <strong>Jhon James Espinoza Hoyos</strong></p>
+                            <p class="small mb-2 text-light" style="font-size: 0.8rem;">Titular: <strong>Jhon James Espinoza Hoyos</strong>[span_1](start_span)[span_1](end_span)</p>
                             <img src="9986_2.png" alt="QR Yape" style="width: 140px; border-radius: 8px; background: white; padding: 5px;" class="mb-2">
                             <p class="small mb-1" style="font-size: 0.75rem;">Manda tu captura al WhatsApp:</p>
                             <a id="btn-wsp-yape" href="#" target="_blank" class="btn-whatsapp-yape">
-                                <i class="fab fa-whatsapp me-1"></i> Enviar Comprobante (+51 996887022)
+                                <i class="fab fa-whatsapp me-1"></i> Enviar Comprobante (+51 996887022)[span_2](start_span)[span_2](end_span)
                             </a>
                         </div>
 
                         <div class="d-grid">
                             <button class="btn btn-cartel btn-lg py-3 shadow-sm fw-bold" onclick="enviarPedido()">
-                                <i class="fas fa-paper-plane me-2"></i> Enviar Pedido a Caja
+                                <i class="fas fa-paper-plane me-2"></i> Procesar y Enviar Pedido
                             </button>
                         </div>
                     </div>
@@ -190,7 +202,7 @@
         </div>
     </div>
 
-    <!-- Modal para Agregar Cremas y Notas -->
+    <!-- Modal para Personalizar Producto -->
     <div class="modal fade" id="modalNota" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4 bg-dark text-white">
@@ -225,7 +237,7 @@
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS Bundle -->
+    <!-- Script del POS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const productos = [
@@ -349,6 +361,23 @@
             });
         }
 
+        function cambiarTipoServicio() {
+            const tipo = document.getElementById('tipo-servicio').value;
+            const labelCliente = document.getElementById('label-cliente');
+            const inputCliente = document.getElementById('nombre-cliente');
+
+            if (tipo === 'Local') {
+                labelCliente.innerHTML = `<i class="fas fa-user-tag me-1 text-warning"></i> N° de Mesa o Nombre:`;
+                inputCliente.placeholder = "Ej: Mesa 4 o Juan Pérez";
+            } else if (tipo === 'Llevar') {
+                labelCliente.innerHTML = `<i class="fas fa-user me-1 text-warning"></i> Nombre para recojo:`;
+                inputCliente.placeholder = "Ej: Carlos Ruiz";
+            } else if (tipo === 'Delivery') {
+                labelCliente.innerHTML = `<i class="fas fa-map-marker-alt me-1 text-warning"></i> Nombre y Dirección de Entrega:`;
+                inputCliente.placeholder = "Ej: Ana Gómez - Av. Perú 123";
+            }
+        }
+
         function abrirModalNota(id) {
             const prod = productos.find(p => p.id === id);
             document.getElementById('modal-producto-id').value = id;
@@ -460,24 +489,26 @@
 
         function actualizarEnlaceWhatsAppYape(total) {
             const cliente = document.getElementById('nombre-cliente').value || "Cliente";
-            let mensaje = `Hola, soy ${cliente}. Adjunto mi comprobante de Yape por el total de S/ ${total.toFixed(2)} para confirmar mi pedido en El Cártel.`;
-            let urlWsp = `https://wa.me/51996887022?text=${encodeURIComponent(mensaje)}`;
+            const tipoServicio = document.getElementById('tipo-servicio').value;
+            let mensaje = `Hola, soy ${cliente} (${tipoServicio}). Adjunto mi comprobante de Yape por S/ ${total.toFixed(2)} para confirmar mi pedido en El Cártel.`;
+            let urlWsp = `https://wa.me/51996887022?text=${encodeURIComponent(mensaje)}`[span_3](start_span)[span_3](end_span);
             document.getElementById('btn-wsp-yape').href = urlWsp;
         }
 
         function enviarPedido() {
             if (carrito.length === 0) {
-                alert("Agrega al menos un producto a tu pedido.");
+                alert("Agrega al menos un producto al POS.");
                 return;
             }
             const cliente = document.getElementById('nombre-cliente').value.trim();
             if (!cliente) {
-                alert("Por favor ingresa tu número de mesa o nombre.");
+                alert("Por favor ingresa la mesa o los datos del cliente.");
                 return;
             }
 
             const nuevoPedido = {
                 id: Date.now(),
+                tipoServicio: document.getElementById('tipo-servicio').value,
                 cliente: cliente,
                 items: [...carrito],
                 total: document.getElementById('total-pagar').innerText,
@@ -489,7 +520,7 @@
             pedidos.push(nuevoPedido);
             localStorage.setItem('pedidos_restaurante', JSON.stringify(pedidos));
 
-            alert("¡Pedido enviado con éxito a la cocina de El Cártel!");
+            alert("¡Pedido procesado y enviado a caja con éxito!");
             carrito = [];
             document.getElementById('nombre-cliente').value = '';
             actualizarCarrito();
