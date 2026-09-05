@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmear Aura - El Juego</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #0b0b0b;
+            color: #f1f1f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: radial-gradient(circle at center, #1c1c1c 0%, #0b0b0b 100%);
+        }
+        .game-container {
+            width: 100%;
+            max-width: 400px;
+            background: #121212;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+            border: 2px solid #d4af37;
+            text-align: center;
+        }
+        h1 {
+            color: #e5c158;
+            font-size: 24px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: #bfa143;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .aura-box {
+            background: #181818;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .aura-counter {
+            font-size: 36px;
+            font-weight: bold;
+            color: #27ae60;
+            margin: 10px 0;
+        }
+        .rank-title {
+            color: #d4af37;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .action-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #d4af37, #aa820a);
+            border: none;
+            color: #0b0b0b;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: transform 0.1s;
+        }
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+        .log-box {
+            margin-top: 15px;
+            background: #171717;
+            border: 1px dashed #444;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #aaa;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>Farmear Aura</h1>
+        <p class="subtitle">Edición Sigma</p>
+
+        <div class="aura-box">
+            <div class="rank-title">Rango Actual: <span id="rangoTexto">NPC Beta 💀</span></div>
+            <div class="aura-counter" id="puntosAura">0</div>
+            <p style="font-size: 12px; color: #888;">Puntos de Aura</p>
+        </div>
+
+        <button class="action-btn" id="btnFarmear">✨ HACER MEWING / MIRADA</button>
+
+        <div class="log-box" id="logMensaje">
+            Toca el botón para empezar a farmear aura...
+        </div>
+    </div>
+
+    <script>
+        let aura = 0;
+        let nivel = "NPC Beta 💀";
+
+        const btnFarmear = document.getElementById("btnFarmear");
+        const puntosAura = document.getElementById("puntosAura");
+        const rangoTexto = document.getElementById("rangoTexto");
+        const logMensaje = document.getElementById("logMensaje");
+
+        const frasesAura = [
+            "Mirada fija al frente. +10 Aura.",
+            "Ignoraste un mensaje de texto innecesario. +25 Aura.",
+            "Caminaste en cámara lenta bajo la lluvia. +50 Aura.",
+            "Hiciste mewing perfecto frente al espejo. +100 Aura.",
+            "Te pusiste lentes de sol de noche. +150 Aura.",
+            "Actitud Gigachad desbloqueada por un segundo. +300 Aura."
+        ];
+
+        btnFarmear.addEventListener("click", () => {
+            // Sumar puntos aleatorios entre 10 y 50
+            let ganado = Math.floor(Math.random() * 41) + 10;
+            aura += ganado;
+
+            // Actualizar rangos según la cantidad de aura
+            if (aura >= 1000) {
+                nivel = "Dios del Aura Pura 👑";
+            } else if (aura >= 500) {
+                nivel = "Patrick Bateman 🕴️";
+            } else if (aura >= 250) {
+                nivel = "Gigachad 💪";
+            } else if (aura >= 100) {
+                nivel = "Sigma Male 🗿";
+            }
+
+            // Mostrar en pantalla
+            puntosAura.textContent = aura;
+            rangoTexto.textContent = nivel;
+
+            // Mensaje aleatorio
+            let fraseAleatoria = frasesAura[Math.floor(Math.random() * frasesAura.length)];
+            logMensaje.textContent = fraseAleatoria;
+        });
+    </script>
+
+</body>
+</html>
